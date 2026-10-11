@@ -11,7 +11,7 @@ class AppSettings:
 
     @classmethod
     def from_defaults(cls) -> AppSettings:
-        base_path = Path(__file__).parent.parent.parent
+        base_path = Path(__file__).parent.parent
         data_path = base_path / "data"
         return cls(data_directory=data_path)
 

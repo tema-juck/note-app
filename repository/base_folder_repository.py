@@ -10,11 +10,14 @@ class FolderRepository(BaseFolderRepository):
         self.base_path = base_path.resolve()
 
     def _check_path(self, path: Path) -> None:
-        if not path.exists() or not path.is_dir():
-            raise ValueError(f"Folder doesn't exist {path}")
+        path = path.resolve()
+        base_path = self.base_path.resolve()
 
-        if self.base_path not in path.parents and path != self.base_path:
+        if not path.is_relative_to(base_path):
             raise ValueError("Access outside data dir is not allowed!")
+
+        if not path.is_dir():
+            raise ValueError(f"Folder doesn't exist: {path}")
 
     def get_folder_by_path(self, path: Path) -> list[Folder]:
         """Get Folder"""
