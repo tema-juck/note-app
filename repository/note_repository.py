@@ -50,3 +50,18 @@ class NoteRepository(BaseNoteRepository):
         path = note.path.resolve()
         self._check_path(path)
         path.unlink()
+
+    def update_note(self, note: Note, content: str, new_name: str | None = None) -> Note:
+        """Update Note"""
+        path = note.path.resolve()
+        self._check_path(path)
+
+        path.write_text(content, encoding="utf-8")
+
+        if new_name and new_name != note.name:
+            if "/" in new_name or "\\" in new_name:
+                raise ValueError("Invalid Note name")
+            new_path = path.parent / f"{new_name}.md"
+            path.rename(new_path)
+            return Note(new_name, new_path)
+        return note

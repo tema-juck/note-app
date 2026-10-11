@@ -8,7 +8,7 @@ from textual.widgets import Tree
 from textual.widgets.tree import TreeNode
 
 from domain.folder import Folder
-from repository.base_repository import BaseFolderRepository
+from repository.folder_repository import BaseFolderRepository
 
 
 class FileTreeWidget(VerticalScroll):

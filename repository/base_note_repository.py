@@ -18,3 +18,7 @@ class BaseNoteRepository(ABC):
     @abstractmethod
     def delete_note(self, note: Note) -> None:
         pass
+
+    @abstractmethod
+    def update_note(self, note: Note, content: str, new_name: str | None = None) -> Note:
+        pass

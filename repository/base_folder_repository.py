@@ -2,7 +2,7 @@ import shutil
 from pathlib import Path
 
 from domain.folder import Folder
-from repository.base_repository import BaseFolderRepository
+from repository.folder_repository import BaseFolderRepository
 
 
 class FolderRepository(BaseFolderRepository):
