@@ -1,4 +1,5 @@
 from textual.app import App
+
 from config.config import AppSettings
 from screens.main import MainScreen
 

@@ -1,11 +1,10 @@
 """Module CLI"""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
-
-from note.app import NoteManagerApp
 from config.config import AppSettings
+from note.app import NoteManagerApp
 
 
 def create_app(data_path: Path | None = None):
@@ -19,6 +18,17 @@ def create_app(data_path: Path | None = None):
     return NoteManagerApp(settings)
 
 
+def count_up_to(n):
+    i = 1
+    while i <= n:
+        yield i
+        i += 1
+
+
+def letter():
+    yield from "ABC"
+
+
 def run():
     data_path = None
     if len(sys.argv) > 1:
@@ -26,3 +36,4 @@ def run():
 
     app = create_app(data_path)
     app.run()
+  
