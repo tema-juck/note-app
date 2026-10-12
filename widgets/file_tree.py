@@ -4,6 +4,7 @@ from pathlib import Path
 
 from textual.app import ComposeResult
 from textual.containers import VerticalScroll
+from textual.message import Message
 from textual.widgets import Tree
 from textual.widgets.tree import TreeNode
 
@@ -12,7 +13,15 @@ from repository.base_note_repository import BaseNoteRepository
 
 
 class FileTreeWidget(VerticalScroll):
+    """Tree of Folder and Node"""
     _tree: Tree
+
+    class NoteSelected(Message):
+        """Event Node Selected"""
+
+        def __init__(self, node_path: Path) -> None:
+            self.node_path = node_path
+            super().__init__()
 
     def __init__(self, folder_repo: BaseFolderRepository, node_repo: BaseNoteRepository, *args, **kwargs) -> None:
         self._folder_repo = folder_repo
@@ -39,3 +48,8 @@ class FileTreeWidget(VerticalScroll):
         notes = self._node_repo.get_notes_by_path(Path(path))
         for note in notes:
             node.add_leaf(note.name, note.path)
+
+    def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
+        node: TreeNode[Path] = event.node
+        if node.data and node.data.suffix == ".md":
+            self.post_message(self.NoteSelected(node.data))

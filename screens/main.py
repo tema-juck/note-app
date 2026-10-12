@@ -38,3 +38,6 @@ class MainScreen(Screen):
 
     def action_quit(self):
         self.app.exit()
+
+    def on_file_tree_widget_note_selected(self, msg: FileTreeWidget.NoteSelected) -> None:
+        self.notify(msg.node_path._str)
