@@ -1,5 +1,6 @@
 """Modal Class"""
 
+import httpx
 from textual.containers import Container, Horizontal
 from textual.screen import ModalScreen
 from textual.widgets import Button, Input, Static
@@ -36,11 +37,20 @@ class ImportModal(ModalScreen[str]):
             url_input = self.query_one("#input-url", Input)
             url = url_input.value.strip()
             if url:
-                pass
+                self.app.call_later(self.import_data, url)
             else:
                 url_input.styles.border = ("solid", "red")
         else:
             self.dismiss(None)
 
     async def import_data(self, url: str) -> None:
-        pass
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                response = await client.get(url)
+                response.raise_for_status()
+                data = response.text
+                self.dismiss(data)
+        except httpx.HTTPError as e:
+            self.app.notify(f"Load error: {e}", severity="error")
+        except Exception as e:
+            self.app.notify(f"Unknown error: {e}", severity="error")

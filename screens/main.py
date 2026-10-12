@@ -43,8 +43,9 @@ class MainScreen(Screen):
     def action_import(self):
         self.app.push_screen(ImportModal(), self.handle_import)
 
-    def handle_import(self, data):
-        pass
+    def handle_import(self, data: str | None):
+        if data:
+            self.app.notify(data)
 
     def on_file_tree_widget_note_selected(self, msg: FileTreeWidget.NoteSelected) -> None:
         note = self._node_repo.load_note(msg.node_path)
