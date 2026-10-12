@@ -6,6 +6,7 @@ from textual.widgets import Footer, Header
 from note.app import AppSettings
 from repository.base_folder_repository import BaseFolderRepository
 from repository.base_note_repository import BaseNoteRepository
+from screens.import_modal import ImportModal
 from widgets.file_tree import FileTreeWidget
 from widgets.note_view import NoteViewWidget
 
@@ -17,7 +18,7 @@ class MainScreen(Screen):
     }
     """
 
-    BINDINGS = [("q", "quit", "Exit")]  # noqa: RUF012
+    BINDINGS = [("q", "quit", "Exit"), ("i", "import", "Import")]  # noqa: RUF012
 
     def __init__(self, settings: AppSettings, folder_repo: BaseFolderRepository,
                  node_repo: BaseNoteRepository, *args, **kwargs) -> None:
@@ -38,6 +39,12 @@ class MainScreen(Screen):
 
     def action_quit(self):
         self.app.exit()
+
+    def action_import(self):
+        self.app.push_screen(ImportModal(), self.handle_import)
+
+    def handle_import(self, data):
+        pass
 
     def on_file_tree_widget_note_selected(self, msg: FileTreeWidget.NoteSelected) -> None:
         note = self._node_repo.load_note(msg.node_path)
