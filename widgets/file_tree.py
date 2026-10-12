@@ -44,6 +44,10 @@ class FileTreeWidget(VerticalScroll):
         root.data = Path("data")
         root.expand()
 
+    def collapse(self):
+        root = self.query_one(Tree).root
+        root.collapse()
+
     def on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         node: TreeNode[Path] = event.node
         node.remove_children()

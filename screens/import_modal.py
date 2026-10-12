@@ -52,5 +52,5 @@ class ImportModal(ModalScreen[str]):
                 self.dismiss(data)
         except httpx.HTTPError as e:
             self.app.notify(f"Load error: {e}", severity="error")
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             self.app.notify(f"Unknown error: {e}", severity="error")
