@@ -4,8 +4,8 @@ from textual.screen import Screen
 from textual.widgets import Footer, Header
 
 from note.app import AppSettings
-from repository.folder_repository import FolderRepository
-from repository.note_repository import NoteRepository
+from repository.base_folder_repository import BaseFolderRepository
+from repository.base_note_repository import BaseNoteRepository
 from widgets.file_tree import FileTreeWidget
 from widgets.note_view import NoteViewWidget
 
@@ -19,25 +19,29 @@ class MainScreen(Screen):
 
     BINDINGS = [("q", "quit", "Exit")]  # noqa: RUF012
 
-    def __init__(self, settings: AppSettings, *args, **kwargs) -> None:
+    def __init__(self, settings: AppSettings, folder_repo: BaseFolderRepository,
+                 node_repo: BaseNoteRepository, *args, **kwargs) -> None:
         self.settings = settings
+        self._folder_repo = folder_repo
+        self._node_repo = node_repo
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
-        folder_repo = FolderRepository(self.settings.data_directory)
-        node_repo = NoteRepository(self.settings.data_directory)
         yield Header()
         with Horizontal():
-            yield FileTreeWidget(folder_repo, node_repo)
+            yield FileTreeWidget(self._folder_repo, self._node_repo)
             yield NoteViewWidget()
         yield Footer()
 
     def on_mount(self):
         self.title = "Note Manager"
-        self.query_one(NoteViewWidget).text = "## Hi!"
 
     def action_quit(self):
         self.app.exit()
 
     def on_file_tree_widget_note_selected(self, msg: FileTreeWidget.NoteSelected) -> None:
-        self.notify(msg.node_path._str)
+        note = self._node_repo.load_note(msg.node_path)
+        if note.content:
+            self.query_one(NoteViewWidget).text = note.content
+        else:
+            self.query_one(NoteViewWidget).text = ""
