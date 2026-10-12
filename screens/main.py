@@ -1,3 +1,5 @@
+
+import html2text
 from textual.app import ComposeResult
 from textual.containers import Horizontal
 from textual.screen import Screen
@@ -25,6 +27,7 @@ class MainScreen(Screen):
         self.settings = settings
         self._folder_repo = folder_repo
         self._node_repo = node_repo
+        self._dir = settings.data_directory
         super().__init__(*args, **kwargs)
 
     def compose(self) -> ComposeResult:
@@ -45,7 +48,8 @@ class MainScreen(Screen):
 
     def handle_import(self, data: str | None):
         if data:
-            self.app.notify(data)
+            md = html2text.html2text(data)
+            self._node_repo.create_note(self._dir, "imported", md)
 
     def on_file_tree_widget_note_selected(self, msg: FileTreeWidget.NoteSelected) -> None:
         note = self._node_repo.load_note(msg.node_path)
@@ -53,3 +57,6 @@ class MainScreen(Screen):
             self.query_one(NoteViewWidget).text = note.content
         else:
             self.query_one(NoteViewWidget).text = ""
+
+    def on_file_tree_widget_folder_selected(self, msg: FileTreeWidget.FolderSelected) -> None:
+        self._dir = msg.folder_path

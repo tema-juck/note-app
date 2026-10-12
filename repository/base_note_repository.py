@@ -12,7 +12,7 @@ class BaseNoteRepository(ABC):
         pass
 
     @abstractmethod
-    def create_note(self, path: Path, name: str) -> Note:
+    def create_note(self, path: Path, name: str, content: str) -> Note:
         pass
 
     @abstractmethod

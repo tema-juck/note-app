@@ -23,6 +23,13 @@ class FileTreeWidget(VerticalScroll):
             self.node_path = node_path
             super().__init__()
 
+    class FolderSelected(Message):
+        """Event Folder Selected"""
+
+        def __init__(self, folder_path: Path) -> None:
+            self.folder_path = folder_path
+            super().__init__()
+
     def __init__(self, folder_repo: BaseFolderRepository, node_repo: BaseNoteRepository, *args, **kwargs) -> None:
         self._folder_repo = folder_repo
         self._node_repo = node_repo
@@ -53,3 +60,8 @@ class FileTreeWidget(VerticalScroll):
         node: TreeNode[Path] = event.node
         if node.data and node.data.suffix == ".md":
             self.post_message(self.NoteSelected(node.data))
+
+    def on_tree_node_highlighted(self, event: Tree.NodeHighlighted) -> None:
+        node: TreeNode[Path] = event.node
+        if node.data and node.data.suffix != ".md":
+            self.post_message(self.FolderSelected(node.data))
